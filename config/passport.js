@@ -7,7 +7,15 @@ var jwtOptions = {}
 jwtOptions.jwtFromRequest = extractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = secret;
 const strategy = new jwtStrategy(jwtOptions, function(jwtCode, next) {
-  console.log('payload received', jwtCode);
+	if(jwtCode) {
+		const user = 1
+		next(null, user)
+	}
+	else {
+		var err = new Error('Не авторизирован');
+		err.status = 401
+		next(err, null)
+	}
 
 })
 

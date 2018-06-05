@@ -21,7 +21,10 @@ const authController = {
             next(err)
           }
           else {
-            const token = jwt.sign(user.id + user.email, secret);
+            const token = jwt.sign(JSON.stringify({
+              id: user.id,
+              first_name: user.first_name
+            }), secret)
             res.json({
               token: token,
               user: user
@@ -51,7 +54,7 @@ const authController = {
       console.log(err)
       callback({
         status: 500,
-        message: 'Ошибка на сервере, попробуйте позже'
+        message: err
       })
     })
   },
