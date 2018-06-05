@@ -25,6 +25,18 @@ app.use(function (req, res, next) {
 
 app.use('/', routes);
 
+app.use(function(req, res, next) {
+  next({
+		status: 404,
+		message: 'Страница не найдена'
+	});
+});
+app.use(function(err, req, res, next) {
+	console.log(err)
+	res.status(err.status || 500);
+	const message = err.message ? err.message : err.status == 404 ? 'Страница не найдена' : '123'
+	res.json(message);
+})
 app.listen(process.env.PORT, () => {
 	console.log('server running on port ' + process.env.PORT);
 });

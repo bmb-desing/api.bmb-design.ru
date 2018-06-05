@@ -8,12 +8,17 @@ const authController = {
   loginPost: function(req, res, next) {
     authController.findUser(req.body.email, function(error, user) {
       if(error) {
-        res.status(error.status).json(error.message)
+        var err = new Error(error.message)
+        err.status = error.status
+        next(err)
+        //res.status(error.status).json(error.message)
       }
       else {
         authController.passwordCompare(req.body.password, user.password, function(error, status) {
           if (error) {
-            res.status(error.status).json(error.message)
+            var err = new Error(error.message)
+            err.status = error.status
+            next(err)
           }
           else {
             const token = jwt.sign(user.id + user.email, secret);

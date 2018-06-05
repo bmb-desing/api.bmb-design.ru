@@ -9,7 +9,7 @@ module.exports = {
     {
       name      : 'api.bmb-design',
       script    : './app.js',
-      watch: true,
+      watch:  true,
       env: {
         COMMON_VARIABLE: 'true',
         PORT: 3000,
