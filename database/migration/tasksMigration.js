@@ -9,10 +9,12 @@ module.exports = (sequelize, DataTypes) => {
 					'waiting',
 					'work',
 					'ready',
-					'approved'
+					'approved',
+					'fail'
 				],
 				defaultValue: 'waiting'
 			},
+			date_end: DataTypes.DATE,
 			text: DataTypes.TEXT
 		}
 	)}

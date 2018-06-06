@@ -4,6 +4,12 @@ const seedArray = [
     last_name: 'Кузовов',
     email: 'xolms@bmb-design.ru',
     password: '657216as'
+  },
+  {
+    first_name: 'Александр',
+    last_name: 'Свешников',
+    email: 'info@bmb-design.ru',
+    password: '1234'
   }
 ]
 module.exports = function(database) {
@@ -16,7 +22,7 @@ module.exports = function(database) {
           email: item.email,
           password: item.password,
         }).then(function(item) {
-          item.addRoles(2).then(function (roles) {
+          item.addRoles([1]).then(function (roles) {
 					})
           console.log('Пользователь успешно создан')
         }).catch(function(err) {

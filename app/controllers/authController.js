@@ -9,31 +9,23 @@ const authController = {
 
     authController.findUser(req.body.email, function(error, user) {
       if(error) {
-        var err = new Error(error.message)
-        err.status = error.status
-        next(err)
+        res.status(error.status)
+        res.json(error.message)
         //res.status(error.status).json(error.message)
       }
       else {
         authController.passwordCompare(req.body.password, user.password, function(error, status) {
           if (error) {
-            var err = new Error(error.message)
-            err.status = error.status
-            next(err)
+            res.status(error.status)
+            res.json(error.message)
           }
           else {
             const token = jwt.sign(JSON.stringify({
-<<<<<<< HEAD
-              id: user.id,
-              first_name: user.first_name
-            }), secret)
-=======
                 id: user.id,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 host: process.env.HOST
             }, { algorithm: 'RS256', expiresIn: '1m'}), secret);
->>>>>>> 662089df56af17c3ade8918d7d22c7fb27fc0bf9
             res.json({
               token: token,
               user: user

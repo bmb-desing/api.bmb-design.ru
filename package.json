@@ -21,6 +21,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "sequelize": "^4.37.10",
+    "systeminformation": "^3.42.0",
     "transliteration": "^1.6.2"
   }
 }

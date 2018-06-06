@@ -7,27 +7,11 @@ const role = require('../app/models/roles');
 var jwtOptions = {}
 jwtOptions.jwtFromRequest = extractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = secret;
-<<<<<<< HEAD
-const strategy = new jwtStrategy(jwtOptions, function(jwtCode, next) {
-	if(jwtCode) {
-		const user = 1
-		next(null, user)
-	}
-	else {
-		var err = new Error('Не авторизирован');
-		err.status = 401
-		next(err, null)
-	}
-=======
->>>>>>> 662089df56af17c3ade8918d7d22c7fb27fc0bf9
-
-
 
 const strategy = new jwtStrategy(jwtOptions, function(jwtCode, done) {
   console.log(user)
   /** @TODO Проверка на пользователя */
   if (jwtCode) {
-    console.log(jwtCode)
     if(jwtCode.host = process.env.HOST) {
       user.findOne({
         where: {
@@ -51,7 +35,6 @@ const strategy = new jwtStrategy(jwtOptions, function(jwtCode, done) {
           done(true, null)
         }
 			}).catch(function (err) {
-			  console.log(err)
         done(err)
 			})
     }

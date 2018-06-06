@@ -1,16 +1,16 @@
 const passport = require('../../config/passport');
 const authMiddleware = {
+    noAuth: function(req, res, next) {
+        if(req.headers.authenticate) {
+            res.status(403)
+            res.json('У вас нет прав для просмотра этой страницы')
+        }
+    },
     isAuth: function (req, res, next) {
         passport.authenticate('jwt', function (err, user) {
-            if (err) {
-                var error = new Error('Не авторизирован')
-                error.status = 401
-                next(error)
-            }
-            else if(!user) {
-                var error = new Error('Не авторизирован')
-                error.status = 401
-                next(error)
+            if (err || !user) {
+                res.status(401)
+                res.json('Вы не авторизированны, пожалуйста авторизируйтесь')
             }
             else {
                 req.user = user
@@ -19,7 +19,6 @@ const authMiddleware = {
 
         })(req, res, next)
     },
-    //isAuth: passport.authenticate('jwt', {session: false}),
     nextPage: function (req, res, next) {
         res.json(req.user)
     }

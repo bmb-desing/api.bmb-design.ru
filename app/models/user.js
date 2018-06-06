@@ -1,3 +1,3 @@
 const db = require('../../config/database');
-const user = db.user;
-module.exports = user
+
+module.exports = db.user;
