@@ -4,12 +4,13 @@ const passport = require("passport");
 const secret = process.env.JWT_HASH;
 const user = require('../app/models/user');
 const role = require('../app/models/roles');
-var jwtOptions = {}
+var jwtOptions = {};
+const moment = require('moment');
+
 jwtOptions.jwtFromRequest = extractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = secret;
 
 const strategy = new jwtStrategy(jwtOptions, function(jwtCode, done) {
-  console.log(user)
   /** @TODO Проверка на пользователя */
   if (jwtCode) {
     if(jwtCode.host = process.env.HOST) {
@@ -27,9 +28,9 @@ const strategy = new jwtStrategy(jwtOptions, function(jwtCode, done) {
           }
         }
       }).then(function (user) {
-
         if(user) {
-          done(null, user)
+            user.password = undefined
+            done(null, user)
         }
         else {
           done(true, null)

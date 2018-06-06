@@ -18,16 +18,13 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.TEXT,
       allowNull: false
-    }
+    },
   },
   {
     hooks: {
       beforeCreate: (user) => {
         user.password = bcrypt.hash(user.password)
       },
-      beforeUpdate: (user) => {
-        user.password = bcrypt.hash(user.password)
-      }
     }
   }
 )}
