@@ -1,11 +1,12 @@
 const user = require('../models/user');
 const bcrypt = require('../../helpers/bcrypt');
-const secret = '123';
+const secret = process.env.JWT_HASH;
 
 const jwt = require('jsonwebtoken');
 const authController = {
   //Авторизация
   loginPost: function(req, res, next) {
+
     authController.findUser(req.body.email, function(error, user) {
       if(error) {
         var err = new Error(error.message)
@@ -22,9 +23,17 @@ const authController = {
           }
           else {
             const token = jwt.sign(JSON.stringify({
+<<<<<<< HEAD
               id: user.id,
               first_name: user.first_name
             }), secret)
+=======
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                host: process.env.HOST
+            }, { algorithm: 'RS256', expiresIn: '1m'}), secret);
+>>>>>>> 662089df56af17c3ade8918d7d22c7fb27fc0bf9
             res.json({
               token: token,
               user: user

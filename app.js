@@ -4,8 +4,8 @@ const seeder = require('./database/seeder');
 const bodyParser = require('body-parser');
 const app = express();
 const config = require('./config');
-
 app.use(config.passport.initialize());
+
 
 config.database.sequelize.sync({force:  process.env.NODE_ENV == 'dev' ? true : false}).then(function() {
 	seeder(config.database)
@@ -24,7 +24,6 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', routes);
-
 app.use(function(req, res, next) {
   next({
 		status: 404,
