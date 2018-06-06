@@ -9,11 +9,15 @@ module.exports = {
     {
       name      : 'api.bmb-design',
       script    : './app.js',
-      watch: true,
+      watch:  true,
       env: {
         COMMON_VARIABLE: 'true',
         PORT: 3000,
         NODE_ENV: 'dev',
+        DB_HOST: 'localhost',
+        DB_USER: 'root',
+        DB_PASS: '1234',
+        DB_NAME: 'bmb-design'
       },
       env_production : {
         NODE_ENV: 'production'
