@@ -6,11 +6,18 @@ const seedArray = [
     password: '657216as'
   }
 ]
-module.exports = function(user) {
-  user.findAll().then(function(users) {
+module.exports = function(database) {
+  database.user.findAll().then(function(users) {
     if(!users.length) {
       seedArray.map(function(item) {
-        user.create(item).then(function() {
+        database.user.create({
+          first_name: item.first_name,
+          last_name: item.last_name,
+          email: item.email,
+          password: item.password,
+        }).then(function(item) {
+          item.addRoles(2).then(function (roles) {
+					})
           console.log('Пользователь успешно создан')
         }).catch(function(err) {
           console.log(err)
