@@ -13,35 +13,8 @@ jwtOptions.secretOrKey = secret;
 const strategy = new jwtStrategy(jwtOptions, function(jwtCode, done) {
   /** @TODO Проверка на пользователя */
   if (jwtCode) {
-    if(jwtCode.host = process.env.HOST) {
-      user.findOne({
-        where: {
-          id: jwtCode.id
-        },
-        include: {
-          model: role,
-          as: 'Roles',
-					through: {
-            attributes: [
-              'name',
-            ]
-          }
-        }
-      }).then(function (user) {
-        if(user) {
-            user.password = undefined
-            done(null, user)
-        }
-        else {
-          done(true, null)
-        }
-			}).catch(function (err) {
-        done(err)
-			})
-    }
-    else {
-      done(true, null)
-    }
+    jwtCode.user.password = undefined
+    done(null, jwtCode.user)
   }
   else {
     done(true, null)

@@ -1,11 +1,6 @@
 const passport = require('../../config/passport');
 const authMiddleware = {
-    noAuth: function(req, res, next) {
-        if(req.headers.authenticate) {
-            res.status(403)
-            res.json('У вас нет прав для просмотра этой страницы')
-        }
-    },
+    //Проверка на авторизацию пользователя
     isAuth: function (req, res, next) {
         passport.authenticate('jwt', function (err, user) {
             if (err || !user) {
@@ -18,8 +13,5 @@ const authMiddleware = {
 
         })(req, res, next)
     },
-    nextPage: function (req, res, next) {
-        res.json(req.user)
-    }
 }
 module.exports = authMiddleware

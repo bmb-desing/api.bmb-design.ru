@@ -18,8 +18,8 @@ const Task = sequelize.import('../database/migration/tasksMigration.js');
 
 Projects.hasMany(Task);
 Task.belongsTo(Projects);
-User.belongsToMany(Role, { through: UserRole, as: 'Roles'});
-Role.belongsToMany(User, { through: UserRole, as: 'Roles' });
+User.belongsToMany(Role, { through: UserRole, as: 'roles'});
+Role.belongsToMany(User, { through: UserRole, as: 'user' });
 
 
 const database = {
