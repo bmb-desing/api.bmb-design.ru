@@ -9,8 +9,7 @@ const authMiddleware = {
     isAuth: function (req, res, next) {
         passport.authenticate('jwt', function (err, user) {
             if (err || !user) {
-                res.status(401)
-                res.json('Вы не авторизированны, пожалуйста авторизируйтесь')
+                res.json({error: true, message: 'Вы не авторизированны, пожалуйста авторизируйтесь'})
             }
             else {
                 req.user = user

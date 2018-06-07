@@ -9,15 +9,13 @@ const authController = {
   loginPost: function(req, res, next) {
     authController.findUser(req.body.email, function(error, user) {
       if(error) {
-        res.status(error.status)
-        res.json(error.message)
+        res.json({error: true, message: error.message})
         //res.status(error.status).json(error.message)
       }
       else {
         authController.passwordCompare(req.body.password, user.password, function(error, status) {
           if (error) {
-            res.status(error.status)
-            res.json(error.message)
+						res.json({error: true, message: error.message})
           }
           else {
             const token = jwt.sign({
@@ -26,6 +24,7 @@ const authController = {
               last_name: user.last_name,
               host: process.env.HOST,
             }, secret, { algorithm: 'HS256', expiresIn: 60 * 60 * 24 * 7});
+            user.password = undefined
             res.json({
               token: token,
               user: user
@@ -58,7 +57,6 @@ const authController = {
       })
     })
   },
-
   //Сравнение паролей пользователя
   passwordCompare: function(password, compare, callback) {
     const passIdentify = bcrypt.compare(password, compare)
@@ -71,6 +69,10 @@ const authController = {
         message: 'Пароли не совпадают'
       })
     }
-  }
+  },
+  //Отдать пользователя
+  getUser: function (req, res, next) {
+    res.json(req.user)
+	}
 }
 module.exports = authController
