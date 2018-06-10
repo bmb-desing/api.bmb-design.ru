@@ -1,5 +1,5 @@
 /** Создание модели пользователя */
-const bcrypt = require('../../helpers/bcrypt');
+const bcrypt = require('../../config/bcrypt');
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define('users', {
     first_name: {

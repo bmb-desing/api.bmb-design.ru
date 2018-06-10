@@ -6,6 +6,10 @@ const app = express();
 const config = require('./config');
 app.use(config.passport.initialize());
 
+//Логи в файл
+
+console.log(config.logger);
+app.use(config.logger);
 
 config.database.sequelize.sync({force:  process.env.NODE_ENV == 'dev' ? true : false}).then(function() {
 	seeder(config.database)
@@ -31,10 +35,11 @@ app.use(function(req, res, next) {
 	});
 });
 app.use(function(err, req, res, next) {
-	console.log(err)
 	res.status(err.status || 500);
+	req.error = err.message
 	const message = err.message ? err.message : err.status == 404 ? 'Страница не найдена' : '123'
 	res.json(message);
+
 })
 app.listen(process.env.PORT, () => {
 	console.log('server running on port ' + process.env.PORT);

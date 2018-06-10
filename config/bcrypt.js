@@ -1,7 +1,7 @@
 /** Помошник для создания и проверки паролей */
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const cryptFunctions = {
+module.exports = {
   //Генерация пароля
   hash(pass) {
     return bcrypt.hashSync(pass, saltRounds);
@@ -11,4 +11,3 @@ const cryptFunctions = {
     return bcrypt.compareSync(pass, hash)
   }
 }
-module.exports = cryptFunctions
