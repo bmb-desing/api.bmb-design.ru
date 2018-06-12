@@ -4,14 +4,12 @@ module.exports = {
   //Все проекты
   getAll: function() {
     return projects.findAll({
-      order: [['date_end', 'ASC']]
     });
   },
   
   //Пагинация проектов
   getByLimit: function(page) {
     return projects.findAndCount({
-      order: [['date_end', 'ASC']],
       limit: 20,
       offset: 20 * (page - 1)
     })
@@ -24,5 +22,10 @@ module.exports = {
         allias : alias
       }
     })
+  },
+  //Добавление проекта
+  addProject: function(project) {
+    return projects.create(project)
   }
+
 }

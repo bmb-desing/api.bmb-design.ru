@@ -1,5 +1,5 @@
 const userRepository = require('../repository/userRepository');
-const authHelpers = require('../heloers/authHelper');
+const authHelpers = require('../helpers/authHelper');
 module.exports = {
   //Авторизация
   loginPost: function(req, res, next) {

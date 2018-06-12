@@ -2,9 +2,11 @@ const translit = require('transliteration');
 module.exports = (sequelize, DataTypes) => {
 	return sequelize.define('projects',
 		{
-			name: DataTypes.STRING,
+			name: {
+				type: DataTypes.STRING,
+				unique: true
+			},
 			alias: DataTypes.STRING,
-			date_end: DataTypes.DATE,
 		},
 		{
 			hooks: {

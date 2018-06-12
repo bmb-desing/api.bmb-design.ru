@@ -14,7 +14,7 @@ module.exports = {
 }
 
 function hasRole(role, user, callback) {
-  const hasRole = user.Roles.findIndex(item => item.name_eng == role)
+  const hasRole = user.roles.findIndex(item => item.name_eng == role)
   if(hasRole != -1) {
     return callback(null, true)
   }
