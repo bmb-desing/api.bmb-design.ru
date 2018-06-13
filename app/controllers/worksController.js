@@ -1,67 +1,87 @@
 const worksRepository = require('../repository/worksRepository');
+const cache = require('../../config/cache');
 module.exports = {
 	//Получение для главной
 	getForIndex: function(req, res, next) {
-		worksRepository.getIndex()
-			.then(function(works) {
-				const workItems = worksRepository.getSortIndex(works)
-				res.json(workItems)
-			})
-			.catch(function(err) {
-				next(err)
-			})
+		worksRepository.getIndex(function(err, works) {
+			if(err) {
+				next(err) 
+			}
+			else {
+				res.json(works)
+			}
+		})
 	},
 	getAll: function(req, res, next) {
 		const limit = req.query.count * 3 || 3 * 3;
 		const page = req.query.page || 1;
-		worksRepository.getAll(page, limit)
-			.then(function(works) {
-				res.json({
-					count: works.count,
-					works: works.rows,
-					countInPage: limit
-				})
-			})
-			.catch(function(err) {
-				next(err)
-			})
+		worksRepository.getAll(page, limit, function(err, result) {
+			if(err) {
+				next(err) 
+			}
+			else {
+				if(!result.rows.length) {
+					res.status(404)
+					res.json('Страница не найдена')
+				}
+				else {
+					res.json(result)
+				}
+				
+			}
+		})
+		
 	},
 	getByType: function(req, res, next) {
 		const limit = req.query.count * 3 || 3 * 3;
 		const page = req.query.page || 1;
 		const type = req.params.type;
-		worksRepository.getByType(type, page, limit)
-			.then(function(works) {
-				if(works.rows.length) {
-					res.json({
-						count: works.count,
-						works: works.rows,
-						countInPage: limit
-					})
-				}
-				else {
-					res.status(404)
-					res.json('Страница не найдена')
-				}
-			})
-			.catch(function(err) {
-				next(err)
-			})
+		cache.get('works[' + type + '][' + page + '][' + limit + ']', function(err, result) {
+			if(err || result == null) {
+				worksRepository.getByType(type, page, limit).then(function(works) {
+					if(works.rows.length) {
+						cache.set('works[' + type + '][' + page + '][' + limit + ']', {count: works.count, works: works.rows, countInPage: limit})
+						res.json({
+							count: works.count,
+							works: works.rows,
+							countInPage: limit
+						})
+					}
+					else {
+						res.status(404)
+						res.json('Страница не найдена')
+					}
+				}).catch(function(err) {
+					next(err)
+				})
+			}
+			else {
+				res.json(result);
+			}
+		})
 	},
 	getByAlias: function(req, res, next) {
 		const alias = req.params.alias;
-		worksRepository.getByAlias(alias)
-			.then(function(work) {
-				if(work) {
-					res.json(work)
-				}
-				else {
-					res.status(404)
-					res.json('Страница не найдена')
-				}
-			})
-			.catch(function(err) {
-				next(err)
-			})
+		cache.get('works-item[' + alias + ']', function(err, result) {
+			if(err || result == null) {
+				worksRepository.getByAlias(alias)
+				.then(function(work) {
+					if(work) {
+						cache.set('works-item[' + alias + ']', work)
+						res.json(work)
+					}
+					else {
+						res.status(404)
+						res.json('Страница не найдена')
+					}
+				})
+				.catch(function(err) {
+					next(err)
+				})
+			}
+			else {
+				res.json(result)
+			}
+		})
 	}
 }

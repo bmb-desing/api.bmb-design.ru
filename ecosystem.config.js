@@ -16,7 +16,7 @@ module.exports = {
         NODE_ENV: 'dev',
         DB_HOST: 'localhost',
         DB_USER: 'root',
-        DB_PASS: '',
+        DB_PASS: '1234',
         DB_NAME: 'bmb-design',
         JWT_HASH: 'bF5RhnnXtCTxE2pjrXhyu9RM6xcC8wbg5mRandWXN5cs6NYJcEFGMVBwrL4SjgSSDrQfDA5n7NmkPEm6nZc95',
         HOST: 'localhost'

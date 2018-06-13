@@ -1,41 +1,69 @@
 const database = require('../models/works');
 const helpers = require('../helpers/worksHelpers');
+const cache = require('../../config/cache');
 //@TODO Добавить кеширование
 module.exports = {
 	//Получение данных для главной
-	getIndex: function() {
-		return database.usluga.findAll({
-			include: [
-				{
-					model: database.works,
-					as: 'works',
-					duplicating: false,
-				}
-			]
-
+	getIndex: function(callback) {
+		cache.get('works-index', function(err, result) {
+			if(err || result == null) {
+				database.usluga.findAll({
+					include: [
+						{
+							model: database.works,
+							as: 'works',
+							duplicating: false,
+						}
+					]
+				})
+				.then(function(works) {
+					const worksSorting = getSortIndex(works)
+					cache.set('works-index', worksSorting, function(err) {
+						if(err) {
+							return callback(err, null)
+						}
+						else {
+							return callback(null, worksSorting)
+						}
+					})
+					
+				})
+				.catch(function(err) {
+					return callback(err, null)
+				})
+			}
+			else {
+				console.log(result)
+				return callback(null, result)
+			}
 		})
 	},
 	//Сортировка данных для вывода на главную
-	getSortIndex: function(works) {
-		var worksArray = []
-		works.map(function(item) {
-			var itemArr = {
-				id: item.id,
-				name: item.name,
-				alias: item.alias,
-				works: helpers.getFourWorks(item.works)
-			}
-			worksArray.push(itemArr)
-		})
-		return worksArray
-	},
 	//Получение всех работ
-	getAll: function(page, limit) {
-		return database.works.findAndCountAll({
-			limit: limit,
-			offset: limit * (page - 1),
-			attributes: ['id', 'alias', 'thumbnail', 'name', 'types']
+	getAll: function(page, limit, callback) {
+		cache.get('works['+ page + '][' + limit + ']' , function(err, result) {
+			if(err || result == null) {
+				database.works.findAndCountAll({
+					limit: limit,
+					offset: limit * (page - 1),
+					attributes: ['id', 'alias', 'thumbnail', 'name', 'types']
+				})
+				.then(function(works) {
+					cache.set('works['+ page + '][' + limit + ']', works, function(err) {
+						if(err) {
+							return callback(err, null)
+						}
+						else {
+							return callback(null, works)
+						}
+					})
+				})
+			}
+			else {
+				return callback(null, result)
+			}
 		})
+		 
 	},
 	//Получение по типу
 	getByType: function(type, page, limit) {
@@ -87,4 +115,18 @@ module.exports = {
 			]
 		})
 	}
+}
+
+function getSortIndex(works) {
+	var worksArray = []
+	works.map(function(item) {
+		var itemArr = {
+			id: item.id,
+			name: item.name,
+			alias: item.alias,
+			works: helpers.getFourWorks(item.works)
+		}
+		worksArray.push(itemArr)
+	})
+	return worksArray
 }
