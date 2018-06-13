@@ -3,47 +3,60 @@ const cache = require('../../config/cache');
 module.exports = {
 	//Получение для главной
 	getForIndex: function(req, res, next) {
-		worksRepository.getIndex(function(err, works) {
-			if(err) {
-				next(err) 
+		cache.get('works-index', function(err, result) {
+			if(err || result == null) {
+				worksRepository.getIndex().then(function(works) {
+					const worksIndex = worksRepository.getSortIndex(works)
+					cache.set('works-index', worksIndex)
+					res.json(worksIndex)
+				})
 			}
 			else {
-				res.json(works)
+				res.json(result)
 			}
 		})
 	},
 	getAll: function(req, res, next) {
 		const limit = req.query.count * 3 || 3 * 3;
 		const page = req.query.page || 1;
-		worksRepository.getAll(page, limit, function(err, result) {
-			if(err) {
-				next(err) 
+		const countMin = limit * (page - 1);
+		const countMax = limit * (page - 1) + limit;
+		cache.get('works', function(err, result) {
+			if(err || result == null) {
+				worksRepository.getAll().then(function(works) {
+					cache.set('works', works)
+					res.json({
+						count: works.count,
+						works: works.rows.slice(countMin, countMax),
+						countInPage: limit
+					})
+				})
 			}
 			else {
-				if(!result.rows.length) {
-					res.status(404)
-					res.json('Страница не найдена')
-				}
-				else {
-					res.json(result)
-				}
-				
+				res.json({
+					count: result.count,
+					works: result.rows.slice(countMin, countMax),
+					countInPage: limit
+				})
 			}
 		})
+		
 		
 	},
 	getByType: function(req, res, next) {
 		const limit = req.query.count * 3 || 3 * 3;
 		const page = req.query.page || 1;
 		const type = req.params.type;
-		cache.get('works[' + type + '][' + page + '][' + limit + ']', function(err, result) {
+		const countMin = limit * (page - 1);
+		const countMax = limit * (page - 1) + limit;
+		cache.get('works[' + type + ']', function(err, result) {
 			if(err || result == null) {
-				worksRepository.getByType(type, page, limit).then(function(works) {
+				worksRepository.getByType(type).then(function(works) {
 					if(works.rows.length) {
-						cache.set('works[' + type + '][' + page + '][' + limit + ']', {count: works.count, works: works.rows, countInPage: limit})
+						cache.set('works[' + type + ']', works)
 						res.json({
 							count: works.count,
-							works: works.rows,
+							works: works.rows.slice(countMin, countMax),
 							countInPage: limit
 						})
 					}
@@ -56,7 +69,11 @@ module.exports = {
 				})
 			}
 			else {
-				res.json(result);
+				res.json({
+					count: result.count,
+					works: result.rows.slice(countMin, countMax),
+					countInPage: limit
+				});
 			}
 		})
 	},
@@ -66,7 +83,9 @@ module.exports = {
 			if(err || result == null) {
 				worksRepository.getByAlias(alias)
 				.then(function(work) {
+					console.log(work)
 					if(work) {
+						//@TODO Добавить случайные работы
 						cache.set('works-item[' + alias + ']', work)
 						res.json(work)
 					}

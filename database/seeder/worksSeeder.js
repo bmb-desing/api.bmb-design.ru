@@ -55,9 +55,9 @@ module.exports = function(database) {
 
 function getProjects() {
 	var seedArr = [];
-	for(var i = 1; i <= 10; i++) {
+	for(var i = 1; i <= 5; i++) {
 		var images = [];
-		for(var k = 1; k <= 10; k++) {
+		for(var k = 1; k <= 3; k++) {
 			var items = {
 				image: '/img/slider/slide-1.jpg',
 				alt: faker.lorem.sentence()

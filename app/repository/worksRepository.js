@@ -1,75 +1,42 @@
 const database = require('../models/works');
 const helpers = require('../helpers/worksHelpers');
-const cache = require('../../config/cache');
 //@TODO Добавить кеширование
 module.exports = {
 	//Получение данных для главной
-	getIndex: function(callback) {
-		cache.get('works-index', function(err, result) {
-			if(err || result == null) {
-				database.usluga.findAll({
-					include: [
-						{
-							model: database.works,
-							as: 'works',
-							duplicating: false,
-						}
-					]
-				})
-				.then(function(works) {
-					const worksSorting = getSortIndex(works)
-					cache.set('works-index', worksSorting, function(err) {
-						if(err) {
-							return callback(err, null)
-						}
-						else {
-							return callback(null, worksSorting)
-						}
-					})
-					
-				})
-				.catch(function(err) {
-					return callback(err, null)
-				})
-			}
-			else {
-				console.log(result)
-				return callback(null, result)
-			}
+	getIndex: function() {
+		return database.usluga.findAll({
+			include: [
+				{
+					model: database.works,
+					as: 'works',
+					duplicating: false,
+				}
+			]
 		})
 	},
 	//Сортировка данных для вывода на главную
-	//Получение всех работ
-	getAll: function(page, limit, callback) {
-		cache.get('works['+ page + '][' + limit + ']' , function(err, result) {
-			if(err || result == null) {
-				database.works.findAndCountAll({
-					limit: limit,
-					offset: limit * (page - 1),
-					attributes: ['id', 'alias', 'thumbnail', 'name', 'types']
-				})
-				.then(function(works) {
-					cache.set('works['+ page + '][' + limit + ']', works, function(err) {
-						if(err) {
-							return callback(err, null)
-						}
-						else {
-							return callback(null, works)
-						}
-					})
-				})
+	getSortIndex: function(works) {
+		var worksArray = []
+		works.map(function(item) {
+			var itemArr = {
+				id: item.id,
+				name: item.name,
+				alias: item.alias,
+				works: helpers.getFourWorks(item.works)
 			}
-			else {
-				return callback(null, result)
-			}
+			worksArray.push(itemArr)
 		})
-		 
+		return worksArray
+	},
+	//Получение всех работ
+	getAll: function() {
+		return database.works.findAndCountAll({
+			attributes: ['id', 'alias', 'thumbnail', 'name', 'types']
+		})
 	},
 	//Получение по типу
-	getByType: function(type, page, limit) {
+	getByType: function(type) {
 		return database.works.findAndCountAll({
-			limit: limit,
-			offset: limit * (page - 1),
 			attributes: ['id', 'alias', 'thumbnail', 'name', 'types'],
 			include: [
 				{
@@ -115,18 +82,4 @@ module.exports = {
 			]
 		})
 	}
-}
-
-function getSortIndex(works) {
-	var worksArray = []
-	works.map(function(item) {
-		var itemArr = {
-			id: item.id,
-			name: item.name,
-			alias: item.alias,
-			works: helpers.getFourWorks(item.works)
-		}
-		worksArray.push(itemArr)
-	})
-	return worksArray
 }
