@@ -56,10 +56,10 @@ module.exports = function(database) {
 function getProjects() {
 	var seedArr = [];
 	for(var i = 1; i <= 10; i++) {
-		var images = []
+		var images = [];
 		for(var k = 1; k <= 10; k++) {
 			var items = {
-				image: faker.image.imageUrl(),
+				image: '/img/slider/slide-1.jpg',
 				alt: faker.lorem.sentence()
 			}
 			images.push(items)
@@ -68,8 +68,8 @@ function getProjects() {
 			title: faker.lorem.words(),
 			description: faker.lorem.sentence(),
 			name: faker.lorem.words(),
-			thumbnail: faker.image.imageUrl(),
-			text: faker.lorem.paragraphs(),
+			thumbnail: '/img/slider/slide-1.jpg',
+			text: faker.lorem.paragraphs(10),
 			types: faker.lorem.words(),
 			images: images
 		}

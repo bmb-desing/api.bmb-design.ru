@@ -47,5 +47,21 @@ module.exports = {
 			.catch(function(err) {
 				next(err)
 			})
+	},
+	getByAlias: function(req, res, next) {
+		const alias = req.params.alias;
+		worksRepository.getByAlias(alias)
+			.then(function(work) {
+				if(work) {
+					res.json(work)
+				}
+				else {
+					res.status(404)
+					res.json('Страница не найдена')
+				}
+			})
+			.catch(function(err) {
+				next(err)
+			})
 	}
 }

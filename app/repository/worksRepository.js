@@ -67,6 +67,7 @@ module.exports = {
 				{
 					model: database.user,
 					as: 'user',
+					attributes: ['first_name', 'last_name', 'id'],
 					through: {
 						attributes: []
 					}
@@ -74,9 +75,14 @@ module.exports = {
 				{
 					model: database.usluga,
 					as: 'usluga',
+					attributes: ['name', 'id', 'alias'],
 					through: {
 						attributes: []
 					}
+				},
+				{
+					model: database.images,
+					as: 'images'
 				}
 			]
 		})
