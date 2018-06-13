@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		alias: {
 			type: DataTypes.STRING,
+			unique: true
 		},
+		types: DataTypes.STRING,
 		thumbnail: {
 			type: DataTypes.STRING,
 		},

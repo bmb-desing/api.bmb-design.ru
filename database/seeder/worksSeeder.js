@@ -27,8 +27,24 @@ module.exports = function(database) {
 						.then(function(usluga) {
 							const works = getProjects()
 							works.map(function(item) {
-								database.works.create(item).then(function(work) {
-									work.setUsluga(usluga)
+								database.works.create({
+									title: item.title,
+									description: item.description,
+									name: item.name,
+									thumbnail: item.thumbnail,
+									text: item.text,
+									types: item.types
+								}).then(function(work) {
+									work.setUser([1, 2])
+									work.setUsluga(usluga).then(function() {
+										item.images.map(function(image) {
+											database.worksImages.create({
+												image: image.image,
+												alt: image.alt,
+												workId: work.id
+											})
+										})
+									});
 								})
 							})
 						})
@@ -40,8 +56,22 @@ module.exports = function(database) {
 function getProjects() {
 	var seedArr = [];
 	for(var i = 1; i <= 10; i++) {
+		var images = []
+		for(var k = 1; k <= 10; k++) {
+			var items = {
+				image: faker.image.imageUrl(),
+				alt: faker.lorem.sentence()
+			}
+			images.push(items)
+		}
 		const item = {
 			title: faker.lorem.words(),
+			description: faker.lorem.sentence(),
+			name: faker.lorem.words(),
+			thumbnail: faker.image.imageUrl(),
+			text: faker.lorem.paragraphs(),
+			types: faker.lorem.words(),
+			images: images
 		}
 		seedArr.push(item)
 	}
