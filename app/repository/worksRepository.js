@@ -5,6 +5,7 @@ module.exports = {
 	//Получение данных для главной
 	getIndex: function() {
 		return database.usluga.findAll({
+			order: [['createdAt', 'DESC']],
 			include: [
 				{
 					model: database.works,
@@ -31,13 +32,15 @@ module.exports = {
 	//Получение всех работ
 	getAll: function() {
 		return database.works.findAndCountAll({
-			attributes: ['id', 'alias', 'thumbnail', 'name', 'types']
+			order: [['createdAt', 'DESC']],
+			attributes: ['id', 'alias', 'thumbnail', 'name', 'types', 'createdAt']
 		})
 	},
 	//Получение по типу
 	getByType: function(type) {
 		return database.works.findAndCountAll({
-			attributes: ['id', 'alias', 'thumbnail', 'name', 'types'],
+			order: [['createdAt', 'DESC']],
+			attributes: ['id', 'alias', 'thumbnail', 'name', 'types', 'createdAt'],
 			include: [
 				{
 					as: 'usluga',
@@ -53,6 +56,7 @@ module.exports = {
 			]
 		})
 	},
+	//Получение по ссылке
 	getByAlias: function(alias) {
 		return database.works.findOne({
 			where: {
@@ -62,7 +66,7 @@ module.exports = {
 				{
 					model: database.user,
 					as: 'user',
-					attributes: ['first_name', 'last_name', 'id'],
+					attributes: ['first_name', 'last_name', 'id', 'alias'],
 					through: {
 						attributes: []
 					}
@@ -79,6 +83,21 @@ module.exports = {
 					model: database.images,
 					as: 'images'
 				}
+			]
+		})
+	},
+	//Получение случайных
+	getRandom: function(alias) {
+		return database.works.findAll({
+			where: {
+				$not: {
+					alias: alias
+				}
+			},
+			limit: 3,
+			attributes: ['id', 'alias', 'thumbnail', 'name', 'types', 'createdAt'],
+			order: [
+				[database.sequelize.fn('RAND', '')]
 			]
 		})
 	}

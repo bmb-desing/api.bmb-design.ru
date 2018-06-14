@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	return sequelize.define('works_images', {
+	return sequelize.define('works_image', {
 		image: {
 			type: DataTypes.STRING,
 			allowNull: false

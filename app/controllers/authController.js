@@ -1,4 +1,4 @@
-const userRepository = require('../repository/userRepository');
+const userRepository = require('../repository/authRepository');
 const authHelpers = require('../helpers/authHelper');
 module.exports = {
   //Авторизация

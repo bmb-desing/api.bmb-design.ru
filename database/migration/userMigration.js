@@ -1,5 +1,6 @@
 /** Создание модели пользователя */
 const bcrypt = require('../../config/bcrypt');
+const translit = require('transliteration');
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define('users', {
     first_name: {
@@ -19,11 +20,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false
     },
+    alias: {
+      type: DataTypes.STRING
+    }
   },
   {
     hooks: {
       beforeCreate: (user) => {
         user.password = bcrypt.hash(user.password)
+        user.alias = translit.slugify(user.first_name + ' ' + user.last_name)
       },
     }
   }

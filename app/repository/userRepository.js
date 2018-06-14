@@ -1,35 +1,63 @@
-const user = require('../models/user');
-const role = require('../models/roles');
+const model = require('../models/user')
 
 module.exports = {
-  //Получение всех пользователей
   getAll: function() {
-    return user.findAndCountAll({
-      include: {
-        model: role,
-        as: 'roles',
-        through: {
+    return model.user.findAll({
+      order: [
+        ['id', 'ASC']
+      ],
+      attributes: ['alias', 'id', 'first_name', 'last_name'],
+      include: [
+        {
+          model: model.info,
           attributes: [
-            'name',
+            'avatar', 'shortText', 'position'
           ]
+        },
+        {
+          model: model.works,
+          as: 'works',
+          attributes: ['id'],
+          through: {
+            attributes: []
+          }
         }
-      }
+      ]
     })
   },
-  //Поиск по любому тегу
-  getByTag: function(values) {
-    return user.findOne({
-      where: values,
-      include: {
-        model: role,
-        as: 'roles',
-        through: {
+  getByAlias: function(alias) {
+    return model.user.findOne({
+      where: {
+        alias: alias
+      },
+      attributes: ['alias', 'id', 'first_name', 'last_name'],
+      include: [
+        {
+          model: model.info,
           attributes: [
-            'name',
+            'avatar', 'text', 'position'
           ]
         }
-      }
+      ]
     })
   },
-
+  getWorksByUser: function(id) {
+    return model.works.findAndCountAll({
+      order: [['createdAt', 'DESC']],
+      attributes: ['id', 'alias', 'thumbnail', 'name', 'types', 'createdAt'],
+      include: [
+        {
+          model: model.user,
+          as: 'user',
+          attributes: [],
+          where: {
+            id: id
+          },
+          through: {
+            attributes: []
+          }
+        }
+      ]
+    })
+  }
 }

@@ -3,5 +3,6 @@ module.exports = {
 	works: db.works,
 	usluga: db.usluga,
 	images: db.worksImages,
-	user: db.user
+	user: db.user,
+	sequelize: db.sequelize
 }

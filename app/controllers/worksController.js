@@ -83,11 +83,17 @@ module.exports = {
 			if(err || result == null) {
 				worksRepository.getByAlias(alias)
 				.then(function(work) {
-					console.log(work)
 					if(work) {
-						//@TODO Добавить случайные работы
-						cache.set('works-item[' + alias + ']', work)
-						res.json(work)
+						worksRepository.getRandom(alias).then(function(other) {
+							cache.set('works-item[' + alias + ']', {
+								work: work,
+								other: other
+							})
+							res.json({
+								work: work,
+								other: other
+							})
+						})
 					}
 					else {
 						res.status(404)
@@ -95,11 +101,15 @@ module.exports = {
 					}
 				})
 				.catch(function(err) {
+			
 					next(err)
 				})
 			}
 			else {
-				res.json(result)
+				res.json({
+					work: result.work,
+					other: result.other
+				})
 			}
 		})
 	}
